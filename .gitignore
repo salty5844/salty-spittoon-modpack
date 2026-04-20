@@ -1,0 +1,9 @@
+# Build outputs
+*.exe
+
+# NSIS logs
+*.log
+
+# OS junk
+Thumbs.db
+.DS_Store
