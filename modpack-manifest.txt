@@ -1,0 +1,16 @@
+Version=26.1.0.0
+mods\fabric-api.jar
+mods\ferritecore-fabric.jar
+mods\iris-fabric.jar
+mods\lambdynamiclights.jar
+mods\lithium-fabric.jar
+mods\modmenu.jar
+mods\modmenu-badges-lib.jar
+mods\presencefootsteps.jar
+mods\shulkerboxtooltip-fabric.jar
+mods\sodium-fabric.jar
+mods\vmp-fabric.jar
+mods\voxy.jar
+resourcepacks\Default-Dark-Mode.zip
+resourcepacks\Faithful 64x.zip
+shaderpacks\ComplementaryReimagined.zip
