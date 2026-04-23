@@ -16,3 +16,5 @@ This project includes third-party content.
 ###### Third-party assets remain the property of their respective owners
 
 ###### The included [`metadata.json`](./metadata.json) is provided as an example configuration. Code signing requires valid Azure credentials and access to the signing account
+
+###### The Salty Spittoon server and modpack are dedicated to [Ian Michael Flanders](https://www.legacycremationfuneral.com/obituaries/ian-flanders)

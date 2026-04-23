@@ -1,4 +1,4 @@
-!define MODPACK_VERSION "26.1.0.0"
+!define MODPACK_VERSION "26.1.2.0"
 !define MODPACK_NAME "Salty-Spittoon-Minecraft-Modpack"
 
 InstallDir  "$APPDATA\.minecraft"
@@ -295,6 +295,8 @@ Function BuildInstalledResourcePackLine
     StrCmp $ResourcePackDarkMode "" +3
       StrCpy $ResourcePackLine '$ResourcePackLine,"file/$ResourcePackDarkMode"'
 
+    StrCpy $ResourcePackLine '$ResourcePackLine,"black_icons"'
+
     StrCpy $ResourcePackLine '$ResourcePackLine]'
 
     Pop $3
@@ -372,7 +374,7 @@ Function WriteLauncherProfileBlock
   FileWrite $0 '",$\r$\n'
 
   ; Remaining fields
-  FileWrite $0 '      "javaArgs" : "-Xmx6G",$\r$\n'
+  FileWrite $0 '      "javaArgs" : "-Xmx6G -XX:+UseZGC -XX:+ZGenerational",$\r$\n'
   FileWrite $0 '      "lastVersionId" : "$LauncherVersionId",$\r$\n'
   FileWrite $0 '      "name" : "$LauncherProfileName",$\r$\n'
   FileWrite $0 '      "type" : "custom"$\r$\n'
@@ -767,10 +769,24 @@ Function UpdateMinecraftResourcePacks
     Pop $0
 
     StrCpy $1 $0 14
-    StrCmp $1 "resourcePacks:" 0 write_original
+    StrCmp $1 "resourcePacks:" 0 check_render_distance
 
       FileWrite $OptionsOutHandle "$ResourcePackLine$\r$\n"
       StrCpy $ResourcePacksLineFound "1"
+      Goto loop
+
+    check_render_distance:
+    StrCpy $1 $0 15
+    StrCmp $1 "renderDistance:" 0 check_simulation_distance
+
+      FileWrite $OptionsOutHandle "renderDistance:10$\r$\n"
+      Goto loop
+
+    check_simulation_distance:
+    StrCpy $1 $0 19
+    StrCmp $1 "simulationDistance:" 0 write_original
+
+      FileWrite $OptionsOutHandle "simulationDistance:10$\r$\n"
       Goto loop
 
     write_original:
@@ -1242,7 +1258,7 @@ FunctionEnd
 Function ModrinthDownload
   IfFileExists "$INSTDIR\salty-spittoon-modpack\modrinth-download.ps1" 0 script_missing
 
-  DetailPrint "Downloading projects from Modrinth..."
+  DetailPrint "Downloading Modrinth projects..."
 
   nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\salty-spittoon-modpack\modrinth-download.ps1"'
   Pop $0 ; exit code
