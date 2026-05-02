@@ -1,11 +1,11 @@
 !include "WinMessages.nsh"
 
-!define VERSION "26.1.2.0"
+!define VERSION "26.1.2.1"
 
 Name "Salty-Signer-${VERSION}"
 Caption "Salty-Signer"
 OutFile "Salty-Signer-${VERSION}.exe"
-Icon        "sign-icon.ico"
+Icon "sign-icon.ico"
 RequestExecutionLevel user
 InstProgressFlags smooth
 
@@ -30,9 +30,7 @@ PageEx instfiles
     PageCallbacks "" InstFilesShow
 PageExEnd
 
-; ----------------------------
-; Button Control Functions
-; ----------------------------
+; UI helpers
 
 Function HideNavButtons
     GetDlgItem $0 $HWNDPARENT 1
@@ -60,9 +58,7 @@ Function InstFilesShow
     Call ForceTitle
 FunctionEnd
 
-; ----------------------------
-; Main Section
-; ----------------------------
+; Main execution
 
 Section
 
@@ -71,16 +67,12 @@ Section
     DetailPrint "=== Salty-Signer ==="
     DetailPrint ""
 
-    ; ----------------------------
-    ; Working Directory
-    ; ----------------------------
+    ; Working directory
     DetailPrint "Working directory:"
     DetailPrint "$EXEDIR"
     DetailPrint ""
 
-    ; ----------------------------
     ; Find NSIS script
-    ; ----------------------------
     DetailPrint "Searching for NSIS script..."
 
     FindFirst $0 $1 "$EXEDIR\installer.nsi"
@@ -92,9 +84,7 @@ Section
     DetailPrint "$Compiler_ScriptPath"
     DetailPrint ""
 
-    ; ----------------------------
-    ; Compile (FIXED)
-    ; ----------------------------
+    ; Compile installer.nsi
     DetailPrint "Compiling..."
 
     DetailPrint "Starting makensis..."
@@ -111,9 +101,7 @@ Section
 
     StrCmp $Compiler_CompileExit "0" 0 compile_fail
 
-    ; ----------------------------
-    ; Locate EXE
-    ; ----------------------------
+    ; Locate compiled EXE
     DetailPrint ""
     DetailPrint "Locating compiled EXE..."
 
@@ -142,9 +130,7 @@ exe_not_found:
 
 exe_done:
 
-    ; ----------------------------
     ; Metadata check
-    ; ----------------------------
     DetailPrint ""
     DetailPrint "Checking for metadata.json..."
 
@@ -162,9 +148,7 @@ metadata_missing:
 
 sign_start:
 
-    ; ----------------------------
-    ; Signing
-    ; ----------------------------
+    ; Sign installer binary
     DetailPrint ""
     DetailPrint "=== Signing ==="
 

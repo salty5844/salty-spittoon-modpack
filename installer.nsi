@@ -1,4 +1,4 @@
-!define MODPACK_VERSION "26.1.2.0"
+!define MODPACK_VERSION "26.1.2.1"
 !define MODPACK_NAME "Salty-Spittoon-Minecraft-Modpack"
 
 InstallDir  "$APPDATA\.minecraft"
@@ -67,6 +67,12 @@ Var OptionsOutHandle
 Var OptionsLine
 Var OptionsTempFile
 Var ResourcePacksLineFound
+Var ShaderPackName
+Var IrisInHandle
+Var IrisOutHandle
+Var IrisLine
+Var IrisTempFile
+Var ShaderPackLineFound
 
 Var LauncherVersionId
 Var LauncherProfileName
@@ -480,15 +486,19 @@ Function UpdateLauncherProfiles
     FileClose $LauncherProfilesOutHandle
     FileClose $LauncherProfilesInHandle
 
+    SetDetailsPrint none
     Delete "$INSTDIR\launcher_profiles.json"
     Rename "$LauncherProfilesTempFile" "$INSTDIR\launcher_profiles.json"
+    SetDetailsPrint both
     Goto done
 
   close_in:
     FileClose $LauncherProfilesInHandle
 
   done:
+    SetDetailsPrint none
     Delete "$LauncherProfilesTempFile"
+    SetDetailsPrint both
     Pop $2
     Pop $1
     Pop $0
@@ -800,142 +810,140 @@ Function UpdateMinecraftResourcePacks
     FileClose $OptionsOutHandle
     FileClose $OptionsInHandle
 
+    SetDetailsPrint none
     Delete "$INSTDIR\options.txt"
     Rename "$OptionsTempFile" "$INSTDIR\options.txt"
+    SetDetailsPrint both
     Goto done
 
   close_in:
     FileClose $OptionsInHandle
 
   done:
+    SetDetailsPrint none
     Delete "$OptionsTempFile"
+    SetDetailsPrint both
     Pop $2
     Pop $1
     Pop $0
 FunctionEnd
 
-Function UpdateMinecraftResourcePacksEmpty
+Function BuildInstalledShaderPackName
   Push $0
   Push $1
   Push $2
 
-  IfFileExists "$INSTDIR\options.txt" 0 done
+  StrCpy $ShaderPackName ""
 
-  GetTempFileName $OptionsTempFile
+  IfFileExists "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt" 0 done
 
   ClearErrors
-  FileOpen $OptionsInHandle "$INSTDIR\options.txt" r
+  FileOpen $0 "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt" r
   IfErrors done
-
-  ClearErrors
-  FileOpen $OptionsOutHandle "$OptionsTempFile" w
-  IfErrors close_in
-
-  StrCpy $ResourcePacksLineFound "0"
 
   loop:
     ClearErrors
-    FileRead $OptionsInHandle $OptionsLine
+    FileRead $0 $1
     IfErrors end
 
-    Push $OptionsLine
+    Push $1
+    Call TrimCRLF
+    Pop $1
+
+    StrCmp $1 "" loop
+
+    StrCpy $2 $1 12
+    StrCmp $2 "shaderpacks\" 0 loop
+      StrCpy $ShaderPackName $1 "" 12
+      Goto end
+
+  end:
+    FileClose $0
+
+  done:
+    Pop $2
+    Pop $1
+    Pop $0
+FunctionEnd
+
+Function UpdateIrisProperties
+  Push $0
+  Push $1
+
+  Call BuildInstalledShaderPackName
+  StrCmp $ShaderPackName "" done
+
+  SetDetailsPrint none
+  CreateDirectory "$INSTDIR\config"
+  SetDetailsPrint both
+
+  IfFileExists "$INSTDIR\config\iris.properties" 0 create_new
+
+  GetTempFileName $IrisTempFile
+
+  ClearErrors
+  FileOpen $IrisInHandle "$INSTDIR\config\iris.properties" r
+  IfErrors done
+
+  ClearErrors
+  FileOpen $IrisOutHandle "$IrisTempFile" w
+  IfErrors close_in
+
+  StrCpy $ShaderPackLineFound "0"
+
+  loop:
+    ClearErrors
+    FileRead $IrisInHandle $IrisLine
+    IfErrors end
+
+    Push $IrisLine
     Call TrimCRLF
     Pop $0
 
-    StrCpy $1 $0 14
-    StrCmp $1 "resourcePacks:" 0 write_original
+    StrCpy $1 $0 11
+    StrCmp $1 "shaderPack=" 0 write_original
 
-      FileWrite $OptionsOutHandle "resourcePacks:[]$\r$\n"
-      StrCpy $ResourcePacksLineFound "1"
+      FileWrite $IrisOutHandle "shaderPack=$ShaderPackName$\r$\n"
+      StrCpy $ShaderPackLineFound "1"
       Goto loop
 
     write_original:
-      FileWrite $OptionsOutHandle "$0$\r$\n"
+      FileWrite $IrisOutHandle "$0$\r$\n"
       Goto loop
 
   end:
-    StrCmp $ResourcePacksLineFound "1" +2
-      FileWrite $OptionsOutHandle "resourcePacks:[]$\r$\n"
+    StrCmp $ShaderPackLineFound "1" +2
+      FileWrite $IrisOutHandle "shaderPack=$ShaderPackName$\r$\n"
 
-    FileClose $OptionsOutHandle
-    FileClose $OptionsInHandle
+    FileClose $IrisOutHandle
+    FileClose $IrisInHandle
 
-    Delete "$INSTDIR\options.txt"
-    Rename "$OptionsTempFile" "$INSTDIR\options.txt"
+    SetDetailsPrint none
+    Delete "$INSTDIR\config\iris.properties"
+    Rename "$IrisTempFile" "$INSTDIR\config\iris.properties"
+    SetDetailsPrint both
     Goto done
 
   close_in:
-    FileClose $OptionsInHandle
+    FileClose $IrisInHandle
 
-  done:
-    Delete "$OptionsTempFile"
-    Pop $2
-    Pop $1
-    Pop $0
-FunctionEnd
-
-Function un.UpdateMinecraftResourcePacksEmpty
-  Push $0
-  Push $1
-  Push $2
-
-  IfFileExists "$INSTDIR\options.txt" 0 done
-
-  GetTempFileName $OptionsTempFile
-
-  ClearErrors
-  FileOpen $OptionsInHandle "$INSTDIR\options.txt" r
-  IfErrors done
-
-  ClearErrors
-  FileOpen $OptionsOutHandle "$OptionsTempFile" w
-  IfErrors close_in
-
-  StrCpy $ResourcePacksLineFound "0"
-
-  loop:
+  create_new:
     ClearErrors
-    FileRead $OptionsInHandle $OptionsLine
-    IfErrors end
-
-    Push $OptionsLine
-    Call un.TrimCRLF
-    Pop $0
-
-    StrCpy $1 $0 14
-    StrCmp $1 "resourcePacks:" 0 write_original
-
-      FileWrite $OptionsOutHandle "resourcePacks:[]$\r$\n"
-      StrCpy $ResourcePacksLineFound "1"
-      Goto loop
-
-    write_original:
-      FileWrite $OptionsOutHandle "$0$\r$\n"
-      Goto loop
-
-  end:
-    StrCmp $ResourcePacksLineFound "1" +2
-      FileWrite $OptionsOutHandle "resourcePacks:[]$\r$\n"
-
-    FileClose $OptionsOutHandle
-    FileClose $OptionsInHandle
-
-    Delete "$INSTDIR\options.txt"
-    Rename "$OptionsTempFile" "$INSTDIR\options.txt"
-    Goto done
-
-  close_in:
-    FileClose $OptionsInHandle
+    FileOpen $IrisOutHandle "$INSTDIR\config\iris.properties" w
+    IfErrors done
+    FileWrite $IrisOutHandle "shaderPack=$ShaderPackName$\r$\n"
+    FileClose $IrisOutHandle
 
   done:
-    Delete "$OptionsTempFile"
-    Pop $2
+    SetDetailsPrint none
+    Delete "$IrisTempFile"
+    SetDetailsPrint both
     Pop $1
     Pop $0
 FunctionEnd
 
 ; =========================
-; INSTALLER HELPER (RESTORED)
+; INSTALLER HELPER
 ; =========================
 Function DeleteManifestListedFile
   Exch $0
@@ -1182,36 +1190,6 @@ Function un.RemoveFilesFromManifest
     Pop $0
 FunctionEnd
 
-Function MoveMatchingFiles
-  Exch $2
-  Exch 1
-  Exch $1
-  Exch 2
-  Exch $0
-  Push $3
-  Push $4
-
-  CreateDirectory "$2"
-
-  FindFirst $3 $4 "$0\$1"
-  StrCmp $4 "" done
-
-  loop:
-    Rename "$0\$4" "$2\$4"
-    FindNext $3 $4
-    StrCmp $4 "" done
-    Goto loop
-
-  done:
-    FindClose $3
-
-    Pop $4
-    Pop $3
-    Pop $0
-    Pop $1
-    Pop $2
-FunctionEnd
-
 Function MakeBackupFolders
   System::Alloc 16
   Pop $LocalTimePtr
@@ -1231,28 +1209,35 @@ Function MakeBackupFolders
   StrCpy $BackupFolder "backup_$MM-$DD-$YY-$HH$Min$6"
 
   CreateDirectory "$INSTDIR\$BackupFolder"
+  CreateDirectory "$INSTDIR\$BackupFolder\config"
   CreateDirectory "$INSTDIR\$BackupFolder\mods"
   CreateDirectory "$INSTDIR\$BackupFolder\resourcepacks"
   CreateDirectory "$INSTDIR\$BackupFolder\shaderpacks"
 
+  CreateDirectory "$INSTDIR\config"
   CreateDirectory "$INSTDIR\mods"
   CreateDirectory "$INSTDIR\resourcepacks"
   CreateDirectory "$INSTDIR\shaderpacks"
 
-  Push "$INSTDIR\mods"
-  Push "*.jar"
-  Push "$INSTDIR\$BackupFolder\mods"
-  Call MoveMatchingFiles
+  nsExec::ExecToLog 'cmd /C xcopy /E /I /Y /H "$INSTDIR\config" "$INSTDIR\$BackupFolder\config"'
+  Pop $0
 
-  Push "$INSTDIR\resourcepacks"
-  Push "*.zip"
-  Push "$INSTDIR\$BackupFolder\resourcepacks"
-  Call MoveMatchingFiles
+  nsExec::ExecToLog 'cmd /C xcopy /E /I /Y /H "$INSTDIR\mods" "$INSTDIR\$BackupFolder\mods"'
+  Pop $0
 
-  Push "$INSTDIR\shaderpacks"
-  Push "*.zip"
-  Push "$INSTDIR\$BackupFolder\shaderpacks"
-  Call MoveMatchingFiles
+  nsExec::ExecToLog 'cmd /C xcopy /Y /H "$INSTDIR\options.txt" "$INSTDIR\$BackupFolder\"'
+  Pop $0
+
+  nsExec::ExecToLog 'cmd /C xcopy /E /I /Y /H "$INSTDIR\resourcepacks" "$INSTDIR\$BackupFolder\resourcepacks"'
+  Pop $0
+
+  nsExec::ExecToLog 'cmd /C xcopy /E /I /Y /H "$INSTDIR\shaderpacks" "$INSTDIR\$BackupFolder\shaderpacks"'
+  Pop $0
+
+  Delete "$INSTDIR\mods\*.jar"
+  Delete "$INSTDIR\resourcepacks\*.zip"
+  Delete "$INSTDIR\shaderpacks\*.zip"
+
 FunctionEnd
 
 Function ModrinthDownload
@@ -1268,6 +1253,9 @@ Function ModrinthDownload
     Abort
 
 success:
+  SetDetailsPrint none
+  Delete "$INSTDIR\salty-spittoon-modpack\modrinth-download.ps1"
+  SetDetailsPrint both
   Return
 
 script_missing:
@@ -1275,12 +1263,27 @@ script_missing:
   Abort
 FunctionEnd
 
+Function PromptForPowerShell7
+  ; Check for PowerShell 7 (pwsh). If missing, offer to open install page.
+  nsExec::ExecToStack 'cmd /C where pwsh >nul 2>nul'
+  Pop $0 ; exit code
+
+  StrCmp $0 0 done
+
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION "PowerShell 7 not detected. The installer will be significantly slower with previous versions of PowerShell.$\r$\n$\r$\nWould you like to close the installer and open the PowerShell 7 installation page?" IDYES open_ps7_link IDNO done
+
+  open_ps7_link:
+    ExecShell "open" "https://apps.microsoft.com/detail/9mz1snwt0n5d?hl=en-US&gl=US"
+    Quit
+
+  done:
+FunctionEnd
+
 Function RemoveInstalledModpack
   IfFileExists "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt" 0 done
 
   Push "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt"
   Call RemoveFilesFromManifest
-  Call UpdateMinecraftResourcePacksEmpty
   Call UpdateLauncherProfilesRemove
 
   RMDir /r "$INSTDIR\salty-spittoon-modpack"
@@ -1337,14 +1340,19 @@ Function ChoicePage
       StrCpy $SecondaryAction "uninstall"
 
     ${ElseIf} $CompareResult == "0"
-      ${NSD_CreateLabel} 0 0 100% 30u "Version $InstalledVersion is already installed.$\r$\n$\r$\nWould you like to uninstall it?"
+      ${NSD_CreateLabel} 0 0 100% 36u "Version $InstalledVersion is already installed.$\r$\n$\r$\nWould you like to reinstall version ${MODPACK_VERSION} or uninstall the existing version?"
       Pop $InfoLabel
 
-      ${NSD_CreateButton} 125u 40u 80u 20u "Uninstall"
+      ${NSD_CreateButton} 80u 48u 80u 20u "Reinstall"
       Pop $InstallButton
       ${NSD_OnClick} $InstallButton PrimaryButtonClick
 
-      StrCpy $PrimaryAction "uninstall"
+      ${NSD_CreateButton} 170u 48u 80u 20u "Uninstall"
+      Pop $UninstallButton
+      ${NSD_OnClick} $UninstallButton SecondaryButtonClick
+
+      StrCpy $PrimaryAction "reinstall"
+      StrCpy $SecondaryAction "uninstall"
 
     ${Else}
       ${NSD_CreateLabel} 0 0 100% 36u "Newer version detected: $InstalledVersion$\r$\n$\r$\nWould you like to downgrade to version ${MODPACK_VERSION} or uninstall the existing version?"
@@ -1411,6 +1419,7 @@ Section "DecideInstallUpdateUninstall"
     MessageBox MB_YESNO "This will upgrade ${MODPACK_NAME} to version ${MODPACK_VERSION}.$\r$\n$\r$\nContinue?" IDYES do_update IDNO cancel_update
 
     do_update:
+      Call PromptForPowerShell7
       Call RemoveInstalledModpack
       Goto done_decide
 
@@ -1418,10 +1427,23 @@ Section "DecideInstallUpdateUninstall"
       Quit
   ${EndIf}
 
+  ${If} $Choice == "reinstall"
+    MessageBox MB_YESNO "This will reinstall ${MODPACK_NAME} version ${MODPACK_VERSION}.$\r$\n$\r$\nContinue?" IDYES do_reinstall IDNO cancel_reinstall
+
+    do_reinstall:
+      Call PromptForPowerShell7
+      Call RemoveInstalledModpack
+      Goto done_decide
+
+    cancel_reinstall:
+      Quit
+  ${EndIf}
+
   ${If} $Choice == "downgrade"
     MessageBox MB_YESNO "This will downgrade ${MODPACK_NAME} to version ${MODPACK_VERSION}.$\r$\n$\r$\nContinue?" IDYES do_downgrade IDNO cancel_downgrade
 
     do_downgrade:
+      Call PromptForPowerShell7
       Call RemoveInstalledModpack
       Goto done_decide
 
@@ -1430,8 +1452,10 @@ Section "DecideInstallUpdateUninstall"
   ${EndIf}
 
   ${If} $Choice == "install"
+    Call PromptForPowerShell7
+
     MessageBox MB_YESNO|MB_ICONQUESTION \
-    "Any current mods, resourcepacks, and shaderpacks in .minecraft will be removed.$\r$\n$\r$\nWould you like to create a backup?" \
+    "Any current mods, resourcepacks, or shaderpacks will be removed and configuration files will be altered.$\r$\n$\r$\nWould you like to create a backup?" \
     IDYES do_backup IDNO skip_backup
 
     do_backup:
@@ -1453,13 +1477,25 @@ Section "DecideInstallUpdateUninstall"
 SectionEnd
 
 Section "CopyModpackFiles"
-  SetOutPath "$INSTDIR"
-  File /nonfatal /a /r "minecraft\"
+  SetOutPath "$INSTDIR\config"
+  File /nonfatal /a /r "config\*.*"
+
+  SetOutPath "$INSTDIR\salty-spittoon-modpack"
+  File /nonfatal /a /r "salty-spittoon-modpack\*.*"
+
+  SetOutPath "$INSTDIR\shaderpacks"
+  File /nonfatal /a /r "shaderpacks\*.*"
+
+  SetOutPath "$INSTDIR\versions"
+  File /nonfatal /a /r "versions\*.*"
   Call ModrinthDownload
 SectionEnd
 
 
 Section "FinalizeInstall"
+  DetailPrint "Configuring iris.properties"
+  Call UpdateIrisProperties
+  DetailPrint "Configuring options.txt"
   Call UpdateMinecraftResourcePacks
   Call UpdateLauncherProfiles
 
@@ -1476,8 +1512,6 @@ Section "FinalizeInstall"
   WriteRegDWORD HKCU "${UNINST_KEY}" "NoRepair" 1
 
   MessageBox MB_OK "${MODPACK_NAME} has been successfully installed.$\r$\n$\r$\nA modpack profile has been added to the Minecraft Launcher."
-
-  Quit
 SectionEnd
 
 ; =========================
@@ -1493,7 +1527,6 @@ Section "un.Uninstall"
 
   Push "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt"
   Call un.RemoveFilesFromManifest
-  Call un.UpdateMinecraftResourcePacksEmpty
   Call un.UpdateLauncherProfilesRemove
 
   RMDir /r "$INSTDIR\salty-spittoon-modpack"
