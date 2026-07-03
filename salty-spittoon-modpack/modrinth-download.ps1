@@ -15,10 +15,10 @@ $mcPath = "$env:APPDATA\.minecraft"
 
 # $mcVersion: Target Minecraft version. Used to filter Modrinth API queries to compatible releases.
 #            Fallback priority: release -> beta -> alpha. Adjust this to update all dynamic mods.
-$mcVersion = "26.1.2"
+$mcVersion = "26.2"
 
 # $modpackVersion: Semantic version for this modpack release. Written to modpack-manifest.txt for uninstaller.
-$modpackVersion = "26.1.2.1"
+$modpackVersion = "26.2.0.0"
 
 # $userAgent: Modrinth API requires User-Agent header identifying the client application.
 $userAgent = "salty5844-salty-spittoon-modpack/$modpackVersion"
@@ -28,7 +28,6 @@ $installedEntries = New-Object System.Collections.Generic.List[string]
 # Manually pinned pack IDs (version-fixed, filename-dynamic).
 # Filenames are resolved from the Modrinth API for the pinned version.
 $compshadersID = "836bPNGo"
-$defaultdarkID = "lsJJZUFO"
 $faithfulID = "yjAqtxxY"
 
 # Prefer Start-ThreadJob for lower overhead parallelism; fall back to Start-Job when unavailable.
@@ -236,9 +235,13 @@ function Start-GroupedDownloads {
                 Invoke-PinnedDownload -VersionId $versionId -OutputDir $outputDir -DisplayName $displayName -UserAgent $userAgent
             }
         } else {
-            $jobs += Start-ParallelJob -InitializationScript $dynamicDownloadFunction -ArgumentList $item.ProjectId, $item.OutputDir, $item.DisplayName, $mcVersion, $userAgent {
-                param($projectId, $outputDir, $displayName, $mcVersion, $userAgent)
-                Invoke-DynamicDownload -ProjectId $projectId -OutputDir $outputDir -DisplayName $displayName -McVersion $mcVersion -UserAgent $userAgent
+            $jobs += Start-ParallelJob -InitializationScript $dynamicDownloadFunction -ArgumentList $item.ProjectId, $item.OutputDir, $item.DisplayName, $mcVersion, $userAgent, $item.Loaders {
+                param($projectId, $outputDir, $displayName, $mcVersion, $userAgent, $loaders)
+                if ($null -eq $loaders) {
+                    $loaders = @("fabric")
+                }
+
+                Invoke-DynamicDownload -ProjectId $projectId -OutputDir $outputDir -DisplayName $displayName -McVersion $mcVersion -UserAgent $userAgent -Loaders $loaders
             }
         }
     }
@@ -267,9 +270,13 @@ function Start-SequentialDownloads {
                 Invoke-PinnedDownload -VersionId $versionId -OutputDir $outputDir -DisplayName $displayName -UserAgent $userAgent
             }
         } else {
-            $job = Start-ParallelJob -InitializationScript $dynamicDownloadFunction -ArgumentList $item.ProjectId, $item.OutputDir, $item.DisplayName, $mcVersion, $userAgent {
-                param($projectId, $outputDir, $displayName, $mcVersion, $userAgent)
-                Invoke-DynamicDownload -ProjectId $projectId -OutputDir $outputDir -DisplayName $displayName -McVersion $mcVersion -UserAgent $userAgent
+            $job = Start-ParallelJob -InitializationScript $dynamicDownloadFunction -ArgumentList $item.ProjectId, $item.OutputDir, $item.DisplayName, $mcVersion, $userAgent, $item.Loaders {
+                param($projectId, $outputDir, $displayName, $mcVersion, $userAgent, $loaders)
+                if ($null -eq $loaders) {
+                    $loaders = @("fabric")
+                }
+
+                Invoke-DynamicDownload -ProjectId $projectId -OutputDir $outputDir -DisplayName $displayName -McVersion $mcVersion -UserAgent $userAgent -Loaders $loaders
             }
         }
 
@@ -303,7 +310,7 @@ $group4 = @(
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "chat-heads"; DisplayName = "Chat Heads"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Pinned";  VersionId = $compshadersID; DisplayName = "Complementary Shaders - Reimagined"; OutputDir = "$mcPath\shaderpacks" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "debugify"; DisplayName = "Debugify"; OutputDir = "$mcPath\mods" },
-    [pscustomobject]@{ Type = "Pinned";  VersionId = $defaultdarkID; DisplayName = "Default Dark Mode"; OutputDir = "$mcPath\resourcepacks" },
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "default-dark-mode"; DisplayName = "Default Dark Mode"; OutputDir = "$mcPath\resourcepacks"; Loaders = @() },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "fabric-api"; DisplayName = "Fabric API"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "ferrite-core"; DisplayName = "FerriteCore"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "libipn"; DisplayName = "libIPN"; OutputDir = "$mcPath\mods" },

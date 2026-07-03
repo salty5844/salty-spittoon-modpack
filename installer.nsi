@@ -1,4 +1,4 @@
-!define MODPACK_VERSION "26.1.2.1"
+!define MODPACK_VERSION "26.2.0.0"
 !define MODPACK_NAME "Salty-Spittoon-Minecraft-Modpack"
 
 InstallDir  "$APPDATA\.minecraft"
