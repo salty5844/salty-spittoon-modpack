@@ -1,8 +1,9 @@
-!define MODPACK_VERSION "26.2.0.0"
+!define MODPACK_VERSION "26.2.0.1"
 !define MODPACK_NAME "Salty-Spittoon-Minecraft-Modpack"
+!define MODPACK_DISPLAY_NAME "Salty Spittoon Minecraft Modpack"
 
 InstallDir  "$APPDATA\.minecraft"
-Name        "${MODPACK_NAME} ${MODPACK_VERSION}"
+Name        "${MODPACK_DISPLAY_NAME} ${MODPACK_VERSION}"
 OutFile     "${__FILEDIR__}\${MODPACK_NAME}-${MODPACK_VERSION}.exe"
 Icon        "icon.ico"
 UninstallIcon "icon.ico"
@@ -312,53 +313,11 @@ Function BuildInstalledResourcePackLine
 FunctionEnd
 
 Function BuildLauncherProfileInfo
-  Push $0
-  Push $1
-  Push $2
-  Push $3
-
   ; Hardcode version ID (your new design)
   StrCpy $LauncherVersionId "salty-spittoon-modpack"
 
-  ; Default fallback
-  StrCpy $LauncherProfileName "Salty Spittoon"
-
-  IfFileExists "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt" 0 done
-
-  ClearErrors
-  FileOpen $0 "$INSTDIR\salty-spittoon-modpack\modpack-manifest.txt" r
-  IfErrors done
-
-  loop:
-    ClearErrors
-    FileRead $0 $1
-    IfErrors end
-
-    Push $1
-    Call TrimCRLF
-    Pop $1
-
-    StrCmp $1 "" loop
-
-    ; Look for Version=
-    StrCpy $2 $1 8
-    StrCmp $2 "Version=" 0 loop
-
-      ; Extract version string after "Version="
-      StrCpy $3 $1 "" 8
-
-      ; Build final profile name
-      StrCpy $LauncherProfileName "Salty Spittoon $3"
-      Goto end
-
-  end:
-    FileClose $0
-
-  done:
-    Pop $3
-    Pop $2
-    Pop $1
-    Pop $0
+  ; Keep launcher profile version aligned with installer version define.
+  StrCpy $LauncherProfileName "Salty Spittoon ${MODPACK_VERSION}"
 FunctionEnd
 
 Function WriteLauncherProfileBlock
@@ -1245,7 +1204,7 @@ Function ModrinthDownload
 
   DetailPrint "Downloading Modrinth projects..."
 
-  nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\salty-spittoon-modpack\modrinth-download.ps1"'
+  nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\salty-spittoon-modpack\modrinth-download.ps1" -ModpackVersion "${MODPACK_VERSION}"'
   Pop $0 ; exit code
 
   StrCmp $0 0 success

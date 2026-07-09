@@ -1,11 +1,15 @@
 # Core configuration for dynamic modpack installation.
 
+param(
+    [string]$ModpackVersion = "26.2.0.0"
+)
+
 # If PowerShell 7+ is available, re-launch this script under pwsh for faster job/runtime performance.
 if (-not $env:SSM_PWSH_RELAUNCHED) {
     $pwsh = Get-Command -Name pwsh -ErrorAction SilentlyContinue
     if ($pwsh -and $PSCommandPath) {
         $env:SSM_PWSH_RELAUNCHED = "1"
-        & $pwsh.Source -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath
+        & $pwsh.Source -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath -ModpackVersion $ModpackVersion
         exit $LASTEXITCODE
     }
 }
@@ -18,17 +22,12 @@ $mcPath = "$env:APPDATA\.minecraft"
 $mcVersion = "26.2"
 
 # $modpackVersion: Semantic version for this modpack release. Written to modpack-manifest.txt for uninstaller.
-$modpackVersion = "26.2.0.0"
+$modpackVersion = $ModpackVersion
 
 # $userAgent: Modrinth API requires User-Agent header identifying the client application.
 $userAgent = "salty5844-salty-spittoon-modpack/$modpackVersion"
 
 $installedEntries = New-Object System.Collections.Generic.List[string]
-
-# Manually pinned pack IDs (version-fixed, filename-dynamic).
-# Filenames are resolved from the Modrinth API for the pinned version.
-$compshadersID = "836bPNGo"
-$faithfulID = "yjAqtxxY"
 
 # Prefer Start-ThreadJob for lower overhead parallelism; fall back to Start-Job when unavailable.
 $useThreadJob = $null -ne (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)
@@ -286,7 +285,7 @@ function Start-SequentialDownloads {
 
 $group1 = @(
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "distanthorizons"; DisplayName = "Distant Horizons"; OutputDir = "$mcPath\mods" },
-    [pscustomobject]@{ Type = "Pinned";  VersionId = $faithfulID; DisplayName = "Faithful 64x"; OutputDir = "$mcPath\resourcepacks" }
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "faithful-64x"; DisplayName = "Faithful 64x"; OutputDir = "$mcPath\resourcepacks"; Loaders = @() }
 )
 
 $group2 = @(
@@ -308,7 +307,7 @@ $group3 = @(
 $group4 = @(
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "bug-splatter"; DisplayName = "Bug Splatter"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "chat-heads"; DisplayName = "Chat Heads"; OutputDir = "$mcPath\mods" },
-    [pscustomobject]@{ Type = "Pinned";  VersionId = $compshadersID; DisplayName = "Complementary Shaders - Reimagined"; OutputDir = "$mcPath\shaderpacks" },
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "complementary-reimagined"; DisplayName = "Complementary Shaders - Reimagined"; OutputDir = "$mcPath\shaderpacks"; Loaders = @() },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "debugify"; DisplayName = "Debugify"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "default-dark-mode"; DisplayName = "Default Dark Mode"; OutputDir = "$mcPath\resourcepacks"; Loaders = @() },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "fabric-api"; DisplayName = "Fabric API"; OutputDir = "$mcPath\mods" },

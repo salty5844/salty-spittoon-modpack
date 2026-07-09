@@ -1,9 +1,9 @@
 !include "WinMessages.nsh"
 
-!define VERSION "26.2.0.0"
+!define VERSION "26.2.0.1"
 
-Name "Salty-Signer-${VERSION}"
-Caption "Salty-Signer"
+Name "Salty Signer ${VERSION}"
+Caption "Salty Signer ${VERSION}"
 OutFile "Salty-Signer-${VERSION}.exe"
 Icon "sign-icon.ico"
 RequestExecutionLevel user
@@ -47,7 +47,7 @@ Function HideNavButtons
 FunctionEnd
 
 Function ForceTitle
-    SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:Salty-Signer"
+    SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:Salty Signer ${VERSION}"
 FunctionEnd
 
 Function .onGUIInit
