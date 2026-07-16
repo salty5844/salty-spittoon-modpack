@@ -55,7 +55,7 @@ It automatically installs the Fabric Loader, adds supported resource packs and s
 
 This project includes third-party content.
 
-- Full license texts are available in [licenses](./licenses/)
+- Full license texts are available in [licenses](./salty-spittoon-modpack/licenses)
 - Attributions and sources are listed in [ATTRIBUTIONS](./ATTRIBUTIONS.md)
 
 ###### All original artwork, logos, and branding related to this project are [© 2026 Taylor Kerr](./TRADEMARKS.md)
