@@ -1,4 +1,4 @@
-!define MODPACK_VERSION "26.2.0.1"
+!define MODPACK_VERSION "26.2.0.2"
 !define MODPACK_NAME "Salty-Spittoon-Minecraft-Modpack"
 !define MODPACK_DISPLAY_NAME "Salty Spittoon Minecraft Modpack"
 

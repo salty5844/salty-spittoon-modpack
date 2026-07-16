@@ -311,6 +311,7 @@ $group4 = @(
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "debugify"; DisplayName = "Debugify"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "default-dark-mode"; DisplayName = "Default Dark Mode"; OutputDir = "$mcPath\resourcepacks"; Loaders = @() },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "fabric-api"; DisplayName = "Fabric API"; OutputDir = "$mcPath\mods" },
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "eXts2L7r"; DisplayName = "Text Placeholder API"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "ferrite-core"; DisplayName = "FerriteCore"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "libipn"; DisplayName = "libIPN"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "lithium"; DisplayName = "Lithium"; OutputDir = "$mcPath\mods" },
