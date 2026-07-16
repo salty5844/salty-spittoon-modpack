@@ -1,10 +1,8 @@
-# Salty Spittoon Minecraft Modpack
+![banner](https://cdn.modrinth.com/data/cached_images/195f93ee9249195b69c3d7d884beceb1ae52dab2_0.webp)
 
-The Salty Spittoon Minecraft Modpack installer enhances your Minecraft experience by installing a curated set of performance, visual, and utility mods directly into your `.minecraft` directory.
+The Salty Spittoon Minecraft Modpack enhances your Minecraft experience by installing a curated set of performance, visual, and utility mods directly into your `.minecraft` directory.
 
 It automatically installs the Fabric Loader, adds supported resource packs and shaders, and creates a dedicated launcher profile for seamless access to the modpack.
-
-![Gallery Image 1](https://cdn.modrinth.com/data/cached_images/0b689a464d69fbf568178a96cd8e944c6243b43f_0.webp)
 
 #### INCLUDED CONTENT
 
@@ -36,6 +34,7 @@ It automatically installs the Fabric Loader, adds supported resource packs and s
 - Cloth Config API
 - Fabric Language Kotlin
 - libIPN
+- Text Placeholder API
 
 ---
 
