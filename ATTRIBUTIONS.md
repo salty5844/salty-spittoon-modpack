@@ -180,6 +180,13 @@
 - Modrinth: <https://modrinth.com/mod/sound-physics-remastered>
 - GitHub: <https://github.com/henkelmax/sound-physics-remastered>
 
+## Text Placeholder API
+
+- Author: [Patbox](https://modrinth.com/user/Patbox)
+- License: [LGPL-3.0-only](salty-spittoon-modpack/licenses/placeholder-api/LICENSE)
+- Modrinth: <https://modrinth.com/mod/placeholder-api>
+- GitHub: <https://github.com/Patbox/TextPlaceholderAPI>
+
 ## Very Many Players
 
 - Author: [ishland](https://modrinth.com/user/ishland)
