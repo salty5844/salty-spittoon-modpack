@@ -1,3 +1,6 @@
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/QusEtOnX?style=plastic&logo=modrinth&logoColor=%2300AF5C)
+](https://modrinth.com/modpack/salty-spittoon-modpack)
+
 ![banner](https://cdn.modrinth.com/data/cached_images/195f93ee9249195b69c3d7d884beceb1ae52dab2_0.webp)
 
 The Salty Spittoon Minecraft Modpack enhances your Minecraft experience by installing a curated set of performance, visual, and utility mods directly into your `.minecraft` directory.
