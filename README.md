@@ -37,6 +37,7 @@ It automatically installs the Fabric Loader, adds supported resource packs and s
 - Fabric Language Kotlin
 - libIPN
 - Text Placeholder API
+- YetAnotherConfigLib
 
 ---
 

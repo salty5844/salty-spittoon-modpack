@@ -1,7 +1,7 @@
 # Core configuration for dynamic modpack installation.
 
 param(
-    [string]$ModpackVersion = "26.2.0.0"
+    [string]$ModpackVersion = "26.2.0.3"
 )
 
 # If PowerShell 7+ is available, re-launch this script under pwsh for faster job/runtime performance.
@@ -320,7 +320,8 @@ $group4 = @(
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "shulkerboxtooltip"; DisplayName = "Shulker Box Tooltip"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "sound-physics-remastered"; DisplayName = "Sound Physics Remastered"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "visuality"; DisplayName = "Visuality"; OutputDir = "$mcPath\mods" },
-    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "vmp-fabric"; DisplayName = "Very Many Players"; OutputDir = "$mcPath\mods" }
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "vmp-fabric"; DisplayName = "Very Many Players"; OutputDir = "$mcPath\mods" },
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "1eAoo2KR"; DisplayName = "YetAnotherConfigLib"; OutputDir = "$mcPath\mods" }
 )
 
 $totalExpectedDownloads = $group1.Count + $group2.Count + $group3.Count + $group4.Count

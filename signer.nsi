@@ -1,6 +1,6 @@
 !include "WinMessages.nsh"
 
-!define VERSION "26.2.0.2"
+!define VERSION "26.2.0.3"
 
 Name "Salty Signer ${VERSION}"
 Caption "Salty Signer ${VERSION}"

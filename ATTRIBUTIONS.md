@@ -214,3 +214,10 @@
 - License: [ARR](salty-spittoon-modpack/licenses/xaeroworldmap/LICENSE.txt)
   - [USAGE](https://modrinth.com/mod/xaeros-world-map#:~:text=Modpacks,Modrinth%2E,-Modrinth)
 - Modrinth: <https://modrinth.com/mod/xaeros-world-map>
+
+## YetAnotherConfigLib
+
+- Author: [isxander](https://modrinth.com/user/isxander)
+- License: [LGPL-3.0-or-later](salty-spittoon-modpack/licenses/YetAnotherConfigLib/LICENSE)
+- Modrinth: <https://modrinth.com/project/1eAoo2KR>
+- GitHub: <https://github.com/isXander/YetAnotherConfigLib>
