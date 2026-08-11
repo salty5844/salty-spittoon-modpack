@@ -19,7 +19,7 @@ It automatically installs the Fabric Loader, adds supported resource packs and s
 - Sound Physics Remastered
 - Inventory Profiles Next
 - Visuality
-- Bug Splatter
+- Collision Effects
 - Chat Heads
 - Shulker Box Tooltip
 - Default Dark Mode

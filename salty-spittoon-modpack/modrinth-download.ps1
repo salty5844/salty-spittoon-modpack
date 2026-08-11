@@ -305,7 +305,7 @@ $group3 = @(
 )
 
 $group4 = @(
-    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "bug-splatter"; DisplayName = "Bug Splatter"; OutputDir = "$mcPath\mods" },
+    [pscustomobject]@{ Type = "Dynamic"; ProjectId = "collision-effects"; DisplayName = "Collision Effects"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "chat-heads"; DisplayName = "Chat Heads"; OutputDir = "$mcPath\mods" },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "complementary-reimagined"; DisplayName = "Complementary Shaders - Reimagined"; OutputDir = "$mcPath\shaderpacks"; Loaders = @() },
     [pscustomobject]@{ Type = "Dynamic"; ProjectId = "debugify"; DisplayName = "Debugify"; OutputDir = "$mcPath\mods" },

@@ -1,12 +1,11 @@
 # Attributions
 
-## Bug Splatter
+## Collision Effects
 
 - Author: [salty5844](https://modrinth.com/user/salty5844)
-- License: [MIT](salty-spittoon-modpack/licenses/bug-splatter/LICENSE)
-- Modrinth: <https://modrinth.com/mod/bug-splatter>
-- GitHub: <https://github.com/salty5844/bug-splatter>
-- Website: <https://www.salty5844.com/bug-splatter>
+- License: [MIT](salty-spittoon-modpack/licenses/collision-effects/LICENSE)
+- Modrinth: <https://modrinth.com/mod/collision-effects>
+- GitHub: <https://github.com/salty5844/collision-effects>
 
 ## Chat Heads
 
